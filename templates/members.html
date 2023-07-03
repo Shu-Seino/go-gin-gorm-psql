@@ -9,8 +9,20 @@
    <h1>Member List</h1>
    <ul>
        {{ range .MemberList }}
-           <li>{{ .Name }}</li>
+       <li>{{ .ID }} - {{ .Name }}</li>
        {{ end }}
    </ul>
+   
+   <h2>Add Member</h2>
+   <form action="/members" method="POST">
+       <label for="name">Name:</label>
+       <input type="text" id="name" name="name" required>
+
+       <label for="id">ID:</label>
+       <input type="number" id="id" name="id" required>
+
+       <button type="submit">Add</button>
+   </form>
+
 </body>
 </html>
