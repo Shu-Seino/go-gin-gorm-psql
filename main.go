@@ -2,39 +2,67 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
+	// "fmt"
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
 	"log"
 )
 
+type Member struct {
+    ID   int
+    Name string
+}
+
+
+func membersHandler(c *gin.Context) {
+    // データベース接続のセットアップ
+    db, err := sql.Open("postgres", "user=postgres dbname=postgres password=postgres sslmode=disable")
+    if err != nil {
+        log.Println(err)
+        c.String(500, "Internal Server Error")
+        return
+    }
+    defer db.Close()
+
+    // メンバーリストの取得
+    rows, err := db.Query("SELECT * FROM member")
+    if err != nil {
+        log.Println(err)
+        c.String(500, "Internal Server Error")
+        return
+    }
+    defer rows.Close()
+
+    memberList := []Member{}
+
+    for rows.Next() {
+        var member Member
+        err := rows.Scan(&member.ID, &member.Name)
+        if err != nil {
+            log.Println(err)
+            continue
+        }
+        memberList = append(memberList, member)
+    }
+
+    // HTMLテンプレートにデータを渡してレンダリング
+    c.HTML(200, "members.html", gin.H{
+        "MemberList": memberList,
+    })
+}
+
 func main() {
-	db, err := sql.Open("postgres", "user=postgres dbname=postgres password=postgres sslmode=disable")
-	if err != nil {
-		fmt.Println("エラー")
-	}
-	defer db.Close()
-	rows, err := db.Query("select * from member")
-	if err != nil {
-		log.Println(err)
-	}
+    r := gin.Default()
 
-	defer rows.Close()
+    // 静的ファイルの配信
+    r.Static("/static", "./static")
 
-	var id int
-	var name string
+    // HTMLテンプレートのロード
+    r.LoadHTMLGlob("templates/*")
 
-	for rows.Next() {
-		rows.Scan(&id, &name)
-		fmt.Println(id, name)
-	}
+    // メンバーリストのルーティングとハンドラの設定
+    r.GET("/members", membersHandler)
 
-	r := gin.Default()
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": name,
-		})
-	})
-	r.Run()
-
+    // サーバーの起動
+    r.Run(":8080")
 }
