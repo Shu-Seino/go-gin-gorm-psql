@@ -1,1 +1,0 @@
-# kominka-hello
