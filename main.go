@@ -13,6 +13,7 @@ import (
 type Member struct {
 	gorm.Model
 	Name string
+	FavoriteFood string
 }
 
 var db *gorm.DB
@@ -30,8 +31,9 @@ func init() {
 
 func insertHandler(c *gin.Context) {
 	name := c.PostForm("name")
+	favoriteFood := c.PostForm("favoriteFood")
 
-	member := Member{Name: name}
+	member := Member{Name: name, FavoriteFood: favoriteFood}
 	if err := db.Create(&member).Error; err != nil {
 		log.Println(err)
 		c.String(500, "Internal Server Error")
@@ -50,7 +52,7 @@ func deleteHandler(c *gin.Context) {
 		return
 	}
 
-	if err := db.Delete(&Member{}, id).Error; err != nil {
+	if err := db.Where("id = ?", id).Delete(&Member{}).Error; err != nil {
 		log.Println(err)
 		c.String(500, "Internal Server Error")
 		return
@@ -72,6 +74,27 @@ func membersHandler(c *gin.Context) {
 	})
 }
 
+func memberHandler(c *gin.Context) {
+	idStr := c.Param("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		log.Println(err)
+		c.String(400, "Invalid ID")
+		return
+	}
+
+	var member Member
+	if err := db.First(&member, id).Error; err != nil {
+		log.Println(err)
+		c.String(500, "Internal Server Error")
+		return
+	}
+
+	c.HTML(200, "member.html", gin.H{
+		"Member": member,
+	})
+}
+
 func main() {
 	r := gin.Default()
 
@@ -81,7 +104,8 @@ func main() {
 
 	r.GET("/members", membersHandler)
 	r.POST("/members", insertHandler)
-	r.DELETE("/members/:id", deleteHandler)
+	r.POST("/delete/members/:id", deleteHandler) 
+	r.GET("/members/:id", memberHandler)
 
 	r.Run(":8080")
 }

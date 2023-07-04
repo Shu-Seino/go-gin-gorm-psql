@@ -5,17 +5,18 @@
 </head>
 <body>
 	<h1>Members</h1>
-	<form method="post" action="/members">
-		<label for="name">Name:</label>
-		<input type="text" id="name" name="name">
-		<input type="submit" value="Add">
-	</form>
+    <form method="post" action="/members">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name">
+        <label for="favoriteFood">Favorite Food:</label>
+        <input type="text" id="favoriteFood" name="favoriteFood">
+        <input type="submit" value="Add">
+    </form>
 	<ul>
 		{{range .MemberList}}
 		<li>
-			{{.Name}}
-			<form method="post" action="/members/{{.ID}}">
-				<input type="hidden" name="_method" value="delete">
+			<a href="/members/{{.ID}}">{{.Name}}</a> 
+			<form method="post" action="/delete/members/{{.ID}}">
 				<input type="submit" value="Delete">
 			</form>
 		</li>
