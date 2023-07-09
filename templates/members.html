@@ -2,22 +2,23 @@
 <html>
 <head>
 	<title>Members</title>
+	<script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-	<h1>Members</h1>
-    <form method="post" action="/members">
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name">
-        <label for="favoriteFood">Favorite Food:</label>
-        <input type="text" id="favoriteFood" name="favoriteFood">
-        <input type="submit" value="Add">
+<body class="bg-gray-200">
+	<h1 class="text-4xl text-center py-4">Members</h1>
+    <form method="post" action="/members" class="w-full max-w-sm mx-auto">
+        <label for="name" class="block text-gray-700 text-sm font-bold mb-2">Name:</label>
+        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="text" id="name" name="name">
+        <label for="favoriteFood" class="block text-gray-700 text-sm font-bold mb-2 mt-4">Favorite Food:</label>
+        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="text" id="favoriteFood" name="favoriteFood">
+        <input class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4" type="submit" value="Add">
     </form>
-	<ul>
+	<ul class="list-none mt-8 w-full max-w-md mx-auto">
 		{{range .MemberList}}
-		<li>
-			<a href="/members/{{.ID}}">{{.Name}}</a> 
+		<li class="mb-2">
+			<a href="/members/{{.ID}}" class="text-blue-500 hover:text-blue-800 text-lg font-bold underline">{{.Name}}</a> 
 			<form method="post" action="/delete/members/{{.ID}}">
-				<input type="submit" value="Delete">
+				<input class="bg-red-500 hover:bg-red-700 text-white font-semibold py-2 px-4 border border-red-500 hover:border-transparent rounded mt-2" type="submit" value="Delete">
 			</form>
 		</li>
 		{{end}}
