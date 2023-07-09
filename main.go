@@ -8,6 +8,7 @@ import (
 	"os"
 	"log"
 	"strconv"
+	
 )
 
 type Member struct {
@@ -68,12 +69,14 @@ func membersHandler(c *gin.Context) {
 		c.String(500, "Internal Server Error")
 		return
 	}
-
-	c.HTML(200, "members.html", gin.H{
-		"MemberList": members,
-	})
+	viewModel :=  ListViewModel{
+		MemberList: members,
+	}
+	c.HTML(200, "members.html",viewModel)
 }
-
+type ListViewModel struct {
+	MemberList []Member ; 
+}
 func memberHandler(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
