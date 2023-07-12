@@ -20,9 +20,10 @@ type Member struct {
 var db *gorm.DB
 
 func init() {
-	godotenv.Load(".env")
-	POSTGRES_USER,POSTGRES_PASSWORD,POSTGRES_DB := os.Getenv("POSTGRES_USER"),os.Getenv("POSTGRES_PASSWORD"),os.Getenv("POSTGRES_DB")
-	conn, err := gorm.Open("postgres", "user="+POSTGRES_USER+" dbname="+POSTGRES_DB+" password="+POSTGRES_PASSWORD+" sslmode=disable")
+	godotenv.Load(".devcontainer/.env")
+	POSTGRES_USER,POSTGRES_PASSWORD,POSTGRES_DB,POSTGRES_HOSTNAME := os.Getenv("POSTGRES_USER"),os.Getenv("POSTGRES_PASSWORD"),os.Getenv("POSTGRES_DB"),os.Getenv("POSTGRES_HOSTNAME_")
+
+	conn, err := gorm.Open("postgres", "host="+POSTGRES_HOSTNAME+" dbname="+POSTGRES_DB+" password="+POSTGRES_PASSWORD+" user="+POSTGRES_USER+" sslmode=disable")
 	if err != nil {
 		log.Fatal("Failed to connect to database:", err)
 	}
